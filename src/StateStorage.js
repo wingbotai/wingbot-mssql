@@ -212,7 +212,7 @@ class StateStorage {
         let where = '';
 
         if (lastInteraction) {
-            where = 'WHERE lastInteraction <= @lastInteraction';
+            where = 'WITH (INDEX(lastInteraction)) WHERE lastInteraction BETWEEN 0 AND @lastInteraction';
         } else if (searchStates) {
             where = 'WHERE';
         }

@@ -43,9 +43,13 @@ class ChatLogStorage {
             ? `TOP ${parseInt(`${limit}`, 10)}`
             : '';
 
+        const forceIndex = pageId
+            ? 'WITH (INDEX(page_sender_timestamp))'
+            : 'WITH (INDEX(flag))';
+
         let query = `SELECT ${top}
                     senderId, request, responses, metadata, pageId, timestamp, err
-                    FROM chatlogs
+                    FROM chatlogs ${forceIndex}
                     WHERE `;
 
         if (pageId) {
@@ -57,15 +61,10 @@ class ChatLogStorage {
 
         const orderBackwards = startAt && !endAt;
 
-        if (startAt) {
-            r.input('startAt', mssql.BigInt, startAt);
-            query += ' AND timestamp >= @startAt';
-        }
-
-        if (endAt) {
-            r.input('endAt', mssql.VarChar, endAt);
-            query += ' AND timestamp <= @endAt';
-
+        if (startAt || endAt) {
+            query += ' AND timestamp BETWEEN @startAt AND @endAt';
+            r.input('startAt', mssql.BigInt, startAt || 0);
+            r.input('endAt', mssql.BigInt, endAt || Number.MAX_SAFE_INTEGER);
         }
 
         query += ' ORDER BY timestamp';
@@ -169,12 +168,20 @@ class ChatLogStorage {
      * @returns {Promise}
      */
     error (err, senderId, responses = [], request = {}, metadata = {}) {
+        let saveError;
+
+        try {
+            saveError = `${err}`.trim().substr(0, 73);
+        } catch (e) {
+            saveError = `${err.message || 'unknown error'}`.substr(0, 73);
+        }
+
         const log = {
             senderId,
             time: new Date(request.timestamp || Date.now()),
             request,
             responses,
-            err: `${err}`
+            err: saveError
         };
 
         Object.assign(log, metadata);

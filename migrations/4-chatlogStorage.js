@@ -16,6 +16,7 @@ module.exports = {
         )`);
 
         await this.query('CREATE INDEX page_sender_timestamp ON chatlogs (pageId, senderId, timestamp DESC)');
+        await this.query('CREATE INDEX sender ON chatlogs (senderId)');
         await this.query('CREATE INDEX flag ON chatlogs (flag, timestamp DESC)');
 
         next();
