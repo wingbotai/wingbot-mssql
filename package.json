@@ -1,6 +1,6 @@
 {
   "name": "wingbot-mssql",
-  "version": "1.0.3",
+  "version": "1.2.0",
   "description": "MSSQL storage for wingbot.ai",
   "main": "src/main.js",
   "scripts": {
@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "migrate": "^1.6.2",
-    "mssql": "^5.1.0",
+    "mssql": "^6.1.0",
     "sqlstring": "^2.3.1"
   }
 }
