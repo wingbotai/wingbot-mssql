@@ -1,10 +1,10 @@
 {
   "name": "wingbot-mssql",
-  "version": "1.2.0",
+  "version": "1.2.4",
   "description": "MSSQL storage for wingbot.ai",
   "main": "src/main.js",
   "scripts": {
-    "devel:sql:start": "(docker rm wingbotMssql || true) && docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=NeotravujPotvoro1' -p 1433:1433 --name wingbotMssql -d mcr.microsoft.com/mssql/server:2017-latest && sleep 10 && docker exec -it wingbotMssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'NeotravujPotvoro1' -Q 'CREATE DATABASE wingbotMssql'",
+    "devel:sql:start": "(docker rm wingbotMssql || true) && docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=NeotravujPotvoro1' -p 1434:1433 --name wingbotMssql -d mcr.microsoft.com/mssql/server:2017-latest && sleep 10 && docker exec -it wingbotMssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'NeotravujPotvoro1' -Q 'CREATE DATABASE wingbotMssql'",
     "devel:sql:stop": "docker kill wingbotMssql && docker rm wingbotMssql",
     "test": "npm run test:lint && npm run test:coverage && npm run test:coverage:threshold",
     "test:unit": "mocha ./test/**/*.test.js",

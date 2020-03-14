@@ -9,7 +9,7 @@ const sql = new MsSql({
     user: 'SA',
     password: 'NeotravujPotvoro1',
     server: 'localhost',
-    port: 1433,
+    port: 1434,
     database: 'wingbotMssql',
     options: {
         encrypt: false

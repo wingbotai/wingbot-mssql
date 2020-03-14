@@ -1,10 +1,7 @@
 'use strict';
 
 const mssql = require('mssql');
-const deepMap = require('./deepMap');
-
-const ISODatePattern = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
-
+const { deepEncode, deepDecode } = require('./deepMap');
 
 /**
  * @typedef {object} State
@@ -142,25 +139,11 @@ class StateStorage {
     }
 
     _decodeState (state) {
-        const obj = JSON.parse(state);
-
-        return deepMap(obj, (value) => {
-            if (typeof value === 'string' && ISODatePattern.test(value)) {
-                return new Date(value);
-            }
-            return value;
-        });
+        return deepDecode(JSON.parse(state));
     }
 
     _encodeState (state) {
-        const obj = deepMap(state, (value) => {
-            if (value instanceof Date) {
-                return value.toISOString();
-            }
-            return value;
-        });
-
-        return JSON.stringify(obj);
+        return JSON.stringify(deepEncode(state));
     }
 
     async _insertState (cp, senderId, pageId, state, lock = 0, lastInt = null, off = false) {

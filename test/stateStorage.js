@@ -90,12 +90,14 @@ describe('<StateStorage>', function () {
         it('is able to recover state from db and encodes dates', async () => {
             ss = new StateStorage(pool.connection());
 
+            const now = new Date();
+
             const state = {
-                dateTest: new Date(),
+                dateTest: now,
                 listTest: [
                     { d: 1 },
                     { d: 2 },
-                    { d: new Date() }
+                    { d: now }
                 ]
             };
 
@@ -108,7 +110,14 @@ describe('<StateStorage>', function () {
 
             const savedState = await ss.getOrCreateAndLock(SENDER_ID2, PAGE_ID, {}, 100);
 
-            assert.deepStrictEqual(savedState.state, state);
+            assert.deepStrictEqual(savedState.state, {
+                dateTest: now,
+                listTest: [
+                    { d: 1 },
+                    { d: 2 },
+                    { d: now }
+                ]
+            });
 
             await ss.saveState(savedState);
         });
@@ -180,5 +189,34 @@ describe('<StateStorage>', function () {
         });
 
     });
+
+    it('encode should work fast', () => {
+        const o = {};
+
+        for (let i = 0; i < 200; i++) {
+            o[`o${i}`] = {};
+            o[`a${i}`] = [];
+            o[`ao${i}`] = [];
+
+            for (let k = 0; k < 200; k++) {
+                o[`o${i}`][`a${k}`] = k;
+            }
+            for (let k = 0; k < 200; k++) {
+                o[`a${i}`].push(k);
+            }
+            for (let k = 0; k < 200; k++) {
+                o[`ao${i}`].push({ k });
+            }
+        }
+
+        const oCopy = JSON.parse(JSON.stringify(o));
+
+        const storage = new StateStorage(null);
+        const e = storage._encodeState(o);
+        const d = storage._decodeState(e);
+
+        assert.deepEqual(d, oCopy);
+    });
+
 
 });
