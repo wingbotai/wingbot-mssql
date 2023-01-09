@@ -54,7 +54,7 @@
     "mocha-istanbul": "^0.3.0",
     "nyc": "^14.1.1",
     "sinon": "^7.4.2",
-    "wingbot": "^2.20.0"
+    "wingbot": "^3.46.4"
   },
   "dependencies": {
     "migrate": "^1.6.2",
